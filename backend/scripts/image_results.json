@@ -1,0 +1,52 @@
+[
+  {
+    "slug": "mango",
+    "image_url": null,
+    "category": "fruits"
+  },
+  {
+    "slug": "papaya",
+    "image_url": null,
+    "category": "misc"
+  },
+  {
+    "slug": "pineapple",
+    "image_url": null,
+    "category": "fruits"
+  },
+  {
+    "slug": "banana",
+    "image_url": null,
+    "category": "fruits"
+  },
+  {
+    "slug": "coconut",
+    "image_url": null,
+    "category": "nuts"
+  },
+  {
+    "slug": "litchi",
+    "image_url": null,
+    "category": "misc"
+  },
+  {
+    "slug": "jackfruit",
+    "image_url": null,
+    "category": "fruits"
+  },
+  {
+    "slug": "guava",
+    "image_url": null,
+    "category": "misc"
+  },
+  {
+    "slug": "dragon-fruit",
+    "image_url": null,
+    "category": "fruits"
+  },
+  {
+    "slug": "passion-fruit",
+    "image_url": null,
+    "category": "fruits"
+  }
+]
