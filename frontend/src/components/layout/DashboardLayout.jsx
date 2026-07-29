@@ -89,7 +89,7 @@ export default function DashboardLayout({ children, title }) {
             </div>
             {isExpanded && (
               <motion.span initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="font-extrabold tracking-tight text-sm text-white">
-                Pantry<span className="text-[#E8956D]">to</span>Plate
+                Pantry <span className="text-[#E8956D]">to</span> Plate
               </motion.span>
             )}
           </Link>

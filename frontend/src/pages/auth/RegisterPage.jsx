@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import useToastStore from '../../store/toastStore';
+import PasswordStrengthIndicator, { validatePassword } from '../../components/common/PasswordStrengthIndicator';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
@@ -35,7 +36,15 @@ function AdminRegister() {
     setError('');
     if (!form.full_name.trim())       { setError('Please enter your full name.'); return; }
     if (!isEmail(form.email))         { setError('Please enter a valid email address.'); return; }
-    if (form.password.length < 8)     { setError('Password must be at least 8 characters.'); return; }
+    
+    const pwdVal = validatePassword(form.password);
+    if (!pwdVal.isValid) {
+      const msg = `Password Not Allowed (${pwdVal.label}): ${pwdVal.reason}`;
+      setError(msg);
+      toast.error(msg);
+      return;
+    }
+
     setLoading(true);
     setTimeout(() => {
       setSentOtp('2026');
@@ -145,6 +154,7 @@ function AdminRegister() {
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {form.password && <PasswordStrengthIndicator password={form.password} />}
               <button type="submit" disabled={loading}
                 className="btn-accent w-full py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-glow-accent disabled:opacity-60">
                 {loading ? 'Sending OTP...' : <><Mail className="w-4 h-4" /> Send Verification Code</>}
@@ -241,6 +251,15 @@ function MemberRegister() {
   const handleJoin = async (e) => {
     e.preventDefault();
     if (!form.invite_code.trim()) { toast.error('Please enter the invite code from your kitchen admin.'); return; }
+    
+    const pwdVal = validatePassword(form.password);
+    if (!pwdVal.isValid) {
+      const msg = `Password Not Allowed (${pwdVal.label}): ${pwdVal.reason}`;
+      setError(msg);
+      toast.error(msg);
+      return;
+    }
+
     setLoading(true);
     const payload = {
       email: form.email,
@@ -314,6 +333,7 @@ function MemberRegister() {
             {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
+        {form.password && <PasswordStrengthIndicator password={form.password} />}
         {/* Invite Code Input — visually distinct */}
         <div className="float-label-wrap">
           <input type="text" value={form.invite_code} onChange={set('invite_code')}

@@ -111,7 +111,7 @@ export default function AdminDashboard() {
     totalItems: 0,
     expiringItems: 0,
     lowStockItems: 0,
-    budget: { limit: 5000, spent: 0 },
+    budget: { limit: 0, spent: 0 },
     topAlert: null,
     todayMenu: { breakfast: 'None planned', lunch: 'None planned', dinner: 'None planned' },
     familyMembers: [],
@@ -123,7 +123,7 @@ export default function AdminDashboard() {
   const expKey = `kitchenOS_budget_expenses_${uid}`;
   const limKey = `kitchenOS_budget_limits_${uid}`;
 
-  let localLimit = 5000;
+  let localLimit = 0;
   let localSpent = 0;
 
   try {

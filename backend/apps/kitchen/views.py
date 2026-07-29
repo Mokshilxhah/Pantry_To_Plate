@@ -51,7 +51,7 @@ class DashboardSummaryView(APIView):
             'totalItems': 0,
             'expiringItems': 0,
             'lowStockItems': 0,
-            'budget': {'limit': 5000, 'spent': 0},
+            'budget': {'limit': 0, 'spent': 0},
             'topAlert': None,
             'todayMenu': {'breakfast': 'None planned', 'lunch': 'None planned', 'dinner': 'None planned'},
             'familyMembers': [],
@@ -77,7 +77,7 @@ class DashboardSummaryView(APIView):
 
             # 4. Budget limits and spent
             budget_settings = BudgetSettings.objects(kitchen_id=kitchen_id_str).first()
-            limit = 5000
+            limit = 0
             if budget_settings and budget_settings.categories:
                 limit = sum(budget_settings.categories.values())
             

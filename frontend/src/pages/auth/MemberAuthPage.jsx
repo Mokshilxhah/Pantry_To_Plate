@@ -107,12 +107,10 @@ function MemberRegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.invite_code.trim()) return toast.error('Please enter the invite code from your admin.');
-    if (form.password.length < 8) return toast.error('Password must be at least 8 characters.');
     
-    // Strict password complexity regex
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]{8,}$/;
-    if (!passwordRegex.test(form.password)) {
-      return toast.error('Security requirement: Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.');
+    const pwdVal = validatePassword(form.password);
+    if (!pwdVal.isValid) {
+      return toast.error(`Password Not Allowed (${pwdVal.label}): ${pwdVal.reason}`);
     }
     
     if (form.password !== form.confirmPassword) return toast.error('Passwords do not match.');

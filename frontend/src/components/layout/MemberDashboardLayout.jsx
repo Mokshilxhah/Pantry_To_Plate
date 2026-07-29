@@ -38,7 +38,7 @@ export default function MemberDashboardLayout({ children, title }) {
               <ChefHat className="w-5 h-5 text-white" />
             </div>
             <div>
-              <div className="font-bold text-lg">PantrytoPlate</div>
+              <div className="font-bold text-lg">Pantry to Plate</div>
               <div className="text-xs text-accent-400">Member Access</div>
             </div>
           </Link>

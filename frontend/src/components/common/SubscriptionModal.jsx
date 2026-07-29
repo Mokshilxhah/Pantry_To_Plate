@@ -89,7 +89,7 @@ function RazorpayModal({ plan, onSuccess, onCancel }) {
             <div className="rzp-logo-icon">⚡</div>
             <div>
               <div className="rzp-brand">Razorpay</div>
-              <div className="rzp-merchant">PantryToPlate Kitchen OS</div>
+              <div className="rzp-merchant">Pantry to Plate Kitchen OS</div>
             </div>
           </div>
           <div className="rzp-amount">

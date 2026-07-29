@@ -162,6 +162,16 @@ export default function BudgetPage() {
       return;
     }
 
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (!form.date) {
+      toast.error('Please select a valid expense date.');
+      return;
+    }
+    if (form.date > todayStr) {
+      toast.error('Invalid Date Selection: Expense date cannot be in the future.');
+      return;
+    }
+
     const tempId = Date.now().toString();
     const newLocalExpense = {
       id: tempId,
@@ -172,7 +182,7 @@ export default function BudgetPage() {
     };
 
     saveExpenses([newLocalExpense, ...expenses]);
-    setForm({ category: 'Fruits/Vegetables', amount: '', note: '', date: new Date().toISOString().split('T')[0] });
+    setForm({ category: 'Fruits/Vegetables', amount: '', note: '', date: todayStr });
     toast.success('Expense recorded successfully!');
 
     if (token) {
@@ -227,6 +237,15 @@ export default function BudgetPage() {
   const saveEdit = async () => {
     if (!editForm.amount || isNaN(parseFloat(editForm.amount))) {
       toast.error('Please enter a valid expense amount.');
+      return;
+    }
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (!editForm.date) {
+      toast.error('Please select a valid expense date.');
+      return;
+    }
+    if (editForm.date > todayStr) {
+      toast.error('Invalid Date Selection: Expense date cannot be in the future.');
       return;
     }
     
@@ -349,7 +368,7 @@ export default function BudgetPage() {
                 <input type="text" placeholder="Note (e.g. Big Basket)" value={form.note}
                   onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
                   className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-800 outline-none focus:border-orange-500 transition-all placeholder-slate-400" />
-                <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
+                <input type="date" value={form.date} max={new Date().toISOString().split('T')[0]} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
                   className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-800 outline-none focus:border-orange-500 transition-all" required />
                 <button type="submit" className="w-full py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1">
                   <Plus className="w-3.5 h-3.5" /> Add
@@ -386,7 +405,7 @@ export default function BudgetPage() {
                             className="w-full px-3 py-1.5 border border-orange-300 rounded-xl text-xs text-slate-800 outline-none" />
                           <input type="text" value={editForm.note} onChange={e => setEditForm(f => ({ ...f, note: e.target.value }))}
                             className="w-full px-3 py-1.5 border border-orange-300 rounded-xl text-xs text-slate-800 outline-none" />
-                          <input type="date" value={editForm.date} onChange={e => setEditForm(f => ({ ...f, date: e.target.value }))}
+                          <input type="date" value={editForm.date} max={new Date().toISOString().split('T')[0]} onChange={e => setEditForm(f => ({ ...f, date: e.target.value }))}
                             className="w-full px-3 py-1.5 border border-orange-300 rounded-xl text-xs text-slate-800 outline-none" />
                           <div className="flex gap-2">
                             <button onClick={saveEdit} className="flex-1 py-1.5 bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1 cursor-pointer">

@@ -42,7 +42,7 @@ export default function AdminDashboardLayout({ children, title }) {
               <ChefHat className="w-5 h-5 text-white" />
             </div>
             <div>
-              <div className="font-bold text-lg">PantrytoPlate</div>
+              <div className="font-bold text-lg">Pantry to Plate</div>
               <div className="text-xs text-primary-400">Admin Portal</div>
             </div>
           </Link>
