@@ -36,14 +36,7 @@ function AdminRegister() {
     setError('');
     if (!form.full_name.trim())       { setError('Please enter your full name.'); return; }
     if (!isEmail(form.email))         { setError('Please enter a valid email address.'); return; }
-    
-    const pwdVal = validatePassword(form.password);
-    if (!pwdVal.isValid) {
-      const msg = `Password Not Allowed (${pwdVal.label}): ${pwdVal.reason}`;
-      setError(msg);
-      toast.error(msg);
-      return;
-    }
+    if (form.password.length < 8)     { setError('Password must be at least 8 characters long.'); return; }
 
     setLoading(true);
     setTimeout(() => {
@@ -51,7 +44,7 @@ function AdminRegister() {
       setOtpMsg(`Verification code sent to ${form.email} — for demo, the code is: 2026`);
       setPhase(2);
       setLoading(false);
-    }, 800);
+    }, 400);
   };
 
   // Phase 2 → Phase 3
@@ -252,11 +245,8 @@ function MemberRegister() {
     e.preventDefault();
     if (!form.invite_code.trim()) { toast.error('Please enter the invite code from your kitchen admin.'); return; }
     
-    const pwdVal = validatePassword(form.password);
-    if (!pwdVal.isValid) {
-      const msg = `Password Not Allowed (${pwdVal.label}): ${pwdVal.reason}`;
-      setError(msg);
-      toast.error(msg);
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters long.');
       return;
     }
 

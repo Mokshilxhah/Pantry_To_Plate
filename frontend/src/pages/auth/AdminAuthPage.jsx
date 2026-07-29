@@ -96,12 +96,7 @@ function AdminRegisterForm() {
     e.preventDefault();
     if (!form.full_name.trim()) return toast.error('Please enter your full name.');
     if (!form.email.includes('@')) return toast.error('Please enter a valid email address.');
-    
-    const pwdVal = validatePassword(form.password);
-    if (!pwdVal.isValid) {
-      return toast.error(`Password Not Allowed (${pwdVal.label}): ${pwdVal.reason}`);
-    }
-    
+    if (form.password.length < 8) return toast.error('Password must be at least 8 characters long.');
     if (form.password !== form.confirmPassword) return toast.error('Passwords do not match.');
 
     setLoading(true);
@@ -109,7 +104,7 @@ function AdminRegisterForm() {
       toast.info(`Verification code sent to ${form.email}. Demo code: 2026`);
       setPhase(2);
       setLoading(false);
-    }, 800);
+    }, 400);
   };
 
   /* Phase 2 → Phase 3 */

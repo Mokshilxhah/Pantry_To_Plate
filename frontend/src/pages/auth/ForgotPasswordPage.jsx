@@ -67,10 +67,7 @@ export default function ForgotPasswordPage() {
     if (otp.length !== 6) return toast.error('Please enter the 6-digit OTP.');
     if (!newPassword)     return toast.error('Please enter a new password.');
     
-    const pwdVal = validatePassword(newPassword);
-    if (!pwdVal.isValid) {
-      return toast.error(`New Password Not Allowed (${pwdVal.label}): ${pwdVal.reason}`);
-    }
+    if (newPassword.length < 8) return toast.error('Password must be at least 8 characters long.');
 
     if (newPassword !== confirmPassword) return toast.error('Passwords do not match.');
 

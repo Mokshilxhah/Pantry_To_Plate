@@ -108,10 +108,7 @@ function MemberRegisterForm() {
     e.preventDefault();
     if (!form.invite_code.trim()) return toast.error('Please enter the invite code from your admin.');
     
-    const pwdVal = validatePassword(form.password);
-    if (!pwdVal.isValid) {
-      return toast.error(`Password Not Allowed (${pwdVal.label}): ${pwdVal.reason}`);
-    }
+    if (form.password.length < 8) return toast.error('Password must be at least 8 characters long.');
     
     if (form.password !== form.confirmPassword) return toast.error('Passwords do not match.');
 
