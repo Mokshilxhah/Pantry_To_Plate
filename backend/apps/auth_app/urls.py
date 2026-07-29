@@ -6,6 +6,7 @@ from .views import (
     RegisterView, LoginView,
     PasswordStrengthCheckView, ForgotPasswordView,
     ResetPasswordView, ChangePasswordView, ProfileUpdateView, ProfileRequestOTPView,
+    SendOTPView,
 )
 from .subscription_views import (
     GetSubscriptionView, GetAvailablePlansView,
@@ -21,6 +22,7 @@ urlpatterns = [
     re_path(r'^member/register/?$', MemberRegisterView.as_view(), name='member_register'),
     re_path(r'^member/login/?$', MemberLoginView.as_view(), name='member_login'),
     re_path(r'^invite-code/?$', GetInviteCodeView.as_view(), name='get_invite_code'),
+    re_path(r'^otp/send/?$', SendOTPView.as_view(), name='send_otp'),
     
     # Password management endpoints
     re_path(r'^password/strength-check/?$', PasswordStrengthCheckView.as_view(), name='password_strength_check'),

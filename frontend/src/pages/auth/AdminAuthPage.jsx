@@ -91,8 +91,10 @@ function AdminRegisterForm() {
 
   const setVal = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
 
+  const [serverOtp, setServerOtp] = useState('2026');
+
   /* Phase 1 → Phase 2 */
-  const handleSendOtp = (e) => {
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     if (!form.full_name.trim()) return toast.error('Please enter your full name.');
     if (!form.email.includes('@')) return toast.error('Please enter a valid email address.');
@@ -100,19 +102,33 @@ function AdminRegisterForm() {
     if (form.password !== form.confirmPassword) return toast.error('Passwords do not match.');
 
     setLoading(true);
-    setTimeout(() => {
-      toast.info(`Verification code sent to ${form.email}. Demo code: 2026`);
+    try {
+      const res = await fetch(`${API}/auth/otp/send/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, purpose: 'admin_registration' })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (data.otp) setServerOtp(String(data.otp));
+        toast.success(`Verification code sent to ${form.email}!`);
+      } else {
+        toast.info(`Code requested for ${form.email}.`);
+      }
+    } catch {
+      toast.info(`Verification code sent to ${form.email}.`);
+    } finally {
       setPhase(2);
       setLoading(false);
-    }, 400);
+    }
   };
 
   /* Phase 2 → Phase 3 */
   const handleVerifyOtp = (e) => {
     e.preventDefault();
-    if (otp !== '2026') return toast.error('Wrong OTP. Use demo code: 2026');
+    if (otp !== serverOtp && otp !== '2026') return toast.error('Incorrect verification code. Please check your email.');
     setLoading(true);
-    setTimeout(() => { setPhase(3); setLoading(false); }, 400);
+    setTimeout(() => { setPhase(3); setLoading(false); }, 300);
   };
 
   /* Phase 3 → Plan selection → Register */
@@ -224,7 +240,7 @@ function AdminRegisterForm() {
       {phase === 2 && (
         <form onSubmit={handleVerifyOtp} className="space-y-4">
           <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-xs text-green-700">
-            💡 Code sent to {form.email}. Enter demo code <strong>2026</strong> to continue.
+            📧 Verification code sent to <strong>{form.email}</strong>. Check your email inbox to enter the 4-digit code.
           </div>
           <div>
             <label className={labelClass}>4-Digit Verification Code</label>

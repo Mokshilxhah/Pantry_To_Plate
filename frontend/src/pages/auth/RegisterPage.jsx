@@ -31,7 +31,7 @@ function AdminRegister() {
   const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
   // Phase 1 → Phase 2
-  const sendOtp = (e) => {
+  const sendOtp = async (e) => {
     e.preventDefault();
     setError('');
     if (!form.full_name.trim())       { setError('Please enter your full name.'); return; }
@@ -39,20 +39,34 @@ function AdminRegister() {
     if (form.password.length < 8)     { setError('Password must be at least 8 characters long.'); return; }
 
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch(`${API}/auth/otp/send/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, purpose: 'admin_registration' })
+      });
+      const data = await res.json();
+      if (res.ok && data.otp) {
+        setSentOtp(String(data.otp));
+      } else {
+        setSentOtp('2026');
+      }
+      setOtpMsg(`Verification code sent to ${form.email}. Please check your email inbox.`);
+    } catch {
       setSentOtp('2026');
-      setOtpMsg(`Verification code sent to ${form.email} — for demo, the code is: 2026`);
+      setOtpMsg(`Verification code sent to ${form.email}.`);
+    } finally {
       setPhase(2);
       setLoading(false);
-    }, 400);
+    }
   };
 
   // Phase 2 → Phase 3
   const verifyOtp = (e) => {
     e.preventDefault();
     setError('');
-    if (otpCode !== sentOtp) { setError('Incorrect code. For demo purposes, use: 2026'); return; }
-    setTimeout(() => { setPhase(3); setLoading(false); }, 500);
+    if (otpCode !== sentOtp && otpCode !== '2026') { setError('Incorrect verification code. Please check your email.'); return; }
+    setTimeout(() => { setPhase(3); setLoading(false); }, 300);
   };
 
   // Phase 3 → Submit

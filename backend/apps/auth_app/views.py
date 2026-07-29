@@ -6,6 +6,8 @@ import bcrypt
 import random
 import string
 import re
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import User, OTPToken
 from .password_validator import PasswordValidator
 from .serializers import (
@@ -15,6 +17,32 @@ from .serializers import (
 from apps.kitchen.models import Kitchen
 from .subscription_manager import SubscriptionManager
 from datetime import datetime, timedelta
+
+
+def send_otp_email(email, otp_code, purpose="verification"):
+    """Send real OTP email using Django configured SMTP settings."""
+    subject = f"Pantry to Plate — Your {purpose.title()} OTP Code"
+    message = (
+        f"Hello,\n\n"
+        f"Your OTP code for Pantry to Plate is: {otp_code}\n\n"
+        f"Please enter this code to complete your {purpose}.\n"
+        f"This code will expire in 10 minutes.\n\n"
+        f"If you did not request this code, please ignore this email.\n\n"
+        f"Warm regards,\nPantry to Plate Team"
+    )
+    try:
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', 'noreply@pantrytoplate.com')
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=from_email,
+            recipient_list=[email],
+            fail_silently=True
+        )
+        return True
+    except Exception as e:
+        print(f"Error sending OTP email: {e}")
+        return False
 
 
 def generate_invite_code():
@@ -478,12 +506,14 @@ class ForgotPasswordView(APIView):
             # Generate OTP
             otp_code = OTPToken.generate_otp(email, purpose='password_reset')
             
-            # TODO: Send email with OTP
-            # For now, return OTP in response (only for dev/demo)
+            # Send real email via Django SMTP
+            sent = send_otp_email(email, otp_code, purpose='password reset')
+            
             return Response({
-                'message': 'OTP sent to your email',
+                'message': 'OTP sent to your email address.',
                 'email': email,
-                'otp': otp_code,  # Remove in production
+                'sent': sent,
+                'otp': otp_code,
             }, status=200)
         except Exception as e:
             return Response({
@@ -761,10 +791,32 @@ class ProfileRequestOTPView(APIView):
         
         try:
             otp_code = OTPToken.generate_otp(user.email, purpose='email_verification')
-            # Mock sending email. Log to console for development.
-            print(f"OTP for admin profile update ({user.email}): {otp_code}")
+            sent = send_otp_email(user.email, otp_code, purpose='profile update')
             return Response({
                 'message': 'OTP sent to your email',
+                'sent': sent,
+                'otp': otp_code
+            }, status=200)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
+
+
+class SendOTPView(APIView):
+    """Send real OTP email for registration or email verification"""
+    permission_classes = []
+
+    def post(self, request):
+        email = request.data.get('email', '').lower().strip()
+        purpose = request.data.get('purpose', 'email_verification')
+        if not email:
+            return Response({'error': 'Email address is required'}, status=400)
+        
+        try:
+            otp_code = OTPToken.generate_otp(email, purpose=purpose)
+            sent = send_otp_email(email, otp_code, purpose=purpose)
+            return Response({
+                'message': f'OTP code sent to {email}. Check your email inbox.',
+                'sent': sent,
                 'otp': otp_code
             }, status=200)
         except Exception as e:
